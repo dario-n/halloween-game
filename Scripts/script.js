@@ -1,18 +1,32 @@
+//Canvas 1
 var tablero = document.getElementById('tablero');
+var ctx = tablero.getContext('2d');
+
 var enemigoR = document.getElementById('enemigoR');
 var enemigoL = document.getElementById('enemigoL');
-var ctx = tablero.getContext("2d");
-var x = tablero.width - 32;
-var y = tablero.height - 32;
+var enemigoActual = enemigoR;
+
 var lastPosX = 0;
 var lastPosY = 0;
 var nextPosX = 0;
 var nextPosY = 0;
+
 var mousedontmove = true;
-var enemigoActual = enemigoR;
+
+//Canvas 2
+var escenario = document.getElementById('escenario');
+var ctx2 = escenario.getContext('2d');
+
+var fantasmaR = document.getElementById('fantasmaR');
+var fantasmaL = document.getElementById('fantasmaL');
+var fantasmaActual = fantasmaR;
+
+var lastPosXFantasma = Math.floor(Math.random() * tablero.width - 48);
+var lastPosYFantasma = Math.floor(Math.random() * tablero.height - 48);
 
 
-tablero.addEventListener("mousemove", function () {
+//Canvas 1
+tablero.addEventListener('mousemove', function () {
     nextPosX = event.offsetX;
     nextPosY = event.offsetY;
     mousedontmove = false;
@@ -28,7 +42,6 @@ tablero.addEventListener("mousemove", function () {
     }
 
 }, 10);*/
-
 
 function actualizarPosY(posY) {
 
@@ -48,7 +61,7 @@ function actualizarPosY(posY) {
 }
 
 function actualizarPosX(posX) {
-    
+
     if (lastPosX > posX) {
         enemigoActual = enemigoL;
         ctx.clearRect(0, 0, tablero.width, tablero.height);
@@ -65,3 +78,14 @@ function actualizarPosX(posX) {
     }
     mousedontmove = true;
 }
+
+//Canvas 2
+function drawFantasma () {
+    ctx2.clearRect(0, 0, escenario.width, escenario.height);
+    ctx2.drawImage(fantasmaActual, lastPosXFantasma, lastPosYFantasma, 48, 48);
+    lastPosXFantasma += 2;
+    lastPosYFantasma += 2;
+
+}
+
+setInterval(drawFantasma, 30);

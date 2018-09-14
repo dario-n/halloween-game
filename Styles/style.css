@@ -1,12 +1,24 @@
 ﻿body
 {
-    margin: 0px;
-    box-sizing: border-box;
+  margin: 0px;
+  box-sizing: border-box;
 }
 
-canvas {
-    display: block;
-    margin: 0 auto;
-    background-image: url("../img/background.jpg");
+.escenario {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  margin: 0 auto;
+  background-image: url("../img/background.jpg");
+  z-index: 1;
+}
 
+.tablero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  margin: 0 auto;
+  z-index: 2;
 }
