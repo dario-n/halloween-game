@@ -25,13 +25,15 @@ var lastPosYFantasma = Math.floor(Math.random() * escenario.height - 48);
 
 
 //Canvas 1
-tablero.addEventListener('mousemove', function () {
-    nextPosX = event.offsetX;
-    nextPosY = event.offsetY;
-    mousedontmove = false;
-    actualizarPosY(nextPosY);
-    actualizarPosX(nextPosX);
-});
+tablero.addEventListener('mousemove', drawScarecrow);
+
+function drawScarecrow() {
+        nextPosX = event.offsetX;
+        nextPosY = event.offsetY;
+        mousedontmove = false;
+        actualizarPosY(nextPosY);
+        actualizarPosX(nextPosX);
+}
 
 /*setInterval(function () {
 
@@ -101,4 +103,6 @@ function perder() {
     console.log('h');
     clearInterval(fin);
     clearInterval(fantasmas);
+    tablero.removeEventListener("mousemove", drawScarecrow);
 }
+
