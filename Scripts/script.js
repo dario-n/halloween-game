@@ -1,108 +1,147 @@
+//Botones
+var btnStart = document.getElementById('start');
+
+//Mouse
+var mousePosX = 0;
+var mousePosY = 0;
+var mousedontmove = true;
+
 //Canvas 1
 var tablero = document.getElementById('tablero');
 var ctx = tablero.getContext('2d');
 
-var enemigoR = document.getElementById('enemigoR');
-var enemigoL = document.getElementById('enemigoL');
-var enemigoActual = enemigoR;
+var actualizarScarecrow_Interval;
 
-var lastPosX = 0;
-var lastPosY = 0;
-var nextPosX = 0;
-var nextPosY = 0;
+//Objeto Scarecrow
+var Scarecrow = { 
+    ladoR: document.getElementById('enemigoR'),
+    ladoL: document.getElementById('enemigoL'),
+    enemigoActual: document.getElementById('enemigoR'),
+    lastPosX: 0,
+    lastPosY: 0,
 
-var mousedontmove = true;
+    actualizarPosX: function (posX) {
+
+        if (this.lastPosX > posX) {
+            this.enemigoActual = this.ladoL;
+            ctx.clearRect(0, 0, tablero.width, tablero.height);
+            this.lastPosX -= 3
+            ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+        }
+        else if (this.lastPosX < posX) {
+            this.enemigoActual = this.ladoR;  
+            ctx.clearRect(0, 0, tablero.width, tablero.height);
+            this.lastPosX += 3
+            ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+        }
+        mousedontmove = true;
+    },
+
+    actualizarPosY: function (posY) {
+
+        if (this.lastPosY > posY) {
+            ctx.clearRect(0, 0, tablero.width, tablero.height);
+            this.lastPosY -= 3
+            ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+        }
+        else if (this.lastPosY < posY) {
+            ctx.clearRect(0, 0, tablero.width, tablero.height);
+            this.lastPosY += 3
+            ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+        }
+        mousedontmove = true;
+    },
+
+    detectar: function () {
+        if (mousePosX > this.lastPosX && mousePosX < this.lastPosX + 48 && mousePosY > this.lastPosY && mousePosY < this.lastPosY + 48) {
+            perder();
+        }
+    }
+};
+
 
 //Canvas 2
 var escenario = document.getElementById('escenario');
 var ctx2 = escenario.getContext('2d');
 
-var fantasmaR = document.getElementById('fantasmaR');
-var fantasmaL = document.getElementById('fantasmaL');
-var fantasmaActual = fantasmaR;
-var lastPosXFantasma = Math.floor(Math.random() * escenario.width - 48);
-var lastPosYFantasma = Math.floor(Math.random() * escenario.height - 48);
+
+var fantasmas = [];
 
 
-//Canvas 1
-tablero.addEventListener('mousemove', drawScarecrow);
 
+
+
+//tablero.addEventListener('mousemove', drawScarecrow);
+    
 function drawScarecrow() {
-        nextPosX = event.offsetX;
-        nextPosY = event.offsetY;
+        mousePosX = event.offsetX;
+        mousePosY = event.offsetY;
         mousedontmove = false;
-        actualizarPosY(nextPosY);
-        actualizarPosX(nextPosX);
+        Scarecrow.actualizarPosY(mousePosY);
+        Scarecrow.actualizarPosX(mousePosX);
+        Scarecrow.detectar();
 }
 
-/*setInterval(function () {
+function actualizarScarecrow() {
 
     if (mousedontmove) {
-        actualizarPosY(nextPosY);
-        actualizarPosX(nextPosX);
+        Scarecrow.actualizarPosY(mousePosY);
+        Scarecrow.actualizarPosX(mousePosX);
+        Scarecrow.detectar();
     }
-
-}, 10);*/
-
-function actualizarPosY(posY) {
-
-    if (lastPosY > posY) {
-        ctx.clearRect(0, 0, tablero.width, tablero.height);
-        lastPosY -= 3
-        ctx.drawImage(enemigoActual, lastPosX, lastPosY, 48, 48);
-    }
-
-    else if (lastPosY < posY) {
-        ctx.clearRect(0, 0, tablero.width, tablero.height);
-        lastPosY += 3
-        ctx.drawImage(enemigoActual, lastPosX, lastPosY, 48, 48);
-
-    }
-    mousedontmove = true;
 }
 
-function actualizarPosX(posX) {
+//actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 30);
 
-    if (lastPosX > posX) {
-        enemigoActual = enemigoL;
-        ctx.clearRect(0, 0, tablero.width, tablero.height);
-        lastPosX -= 3
-        ctx.drawImage(enemigoActual, lastPosX, lastPosY, 48, 48);
 
-    }
-    else if (lastPosX < posX) {
-        enemigoActual = enemigoR;
-        ctx.clearRect(0, 0, tablero.width, tablero.height);
-        lastPosX += 3
-        ctx.drawImage(enemigoActual, lastPosX, lastPosY, 48, 48);
-
-    }
-    mousedontmove = true;
-}
 
 //Canvas 2
-function drawFantasma () {
+function crearFantasma() {
+
+    Fantasma = {
+        ladoR: document.getElementById('fantasmaR'),
+        ladoL: document.getElementById('fantasmaL'),
+        enemigoActual: document.getElementById('fantasmaR'),
+        lastPosX: Math.floor(Math.random() * escenario.width - 48),
+        lastPosY: Math.floor(Math.random() * escenario.height - 48),
+
+        actualizarPos: function () {
+            ctx2.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+            this.lastPosX += 2;
+            this.lastPosY += 2;
+        },
+
+        detectar: function () {
+            if (mousePosX > this.lastPosX && mousePosX < this.lastPosX + 48 && mousePosY > this.lastPosY && mousePosY < this.lastPosY + 48) {
+                perder();
+            }
+        }
+    };
+    ctx2.drawImage(Fantasma.enemigoActual, Fantasma.lastPosX, Fantasma.lastPosY, 48, 48);
+    fantasmas.push(Fantasma);
+}
+
+function actualizarFantasmas() {
     ctx2.clearRect(0, 0, escenario.width, escenario.height);
-    ctx2.drawImage(fantasmaActual, lastPosXFantasma, lastPosYFantasma, 48, 48);
-    lastPosXFantasma += 2;
-    lastPosYFantasma += 2;
+    fantasmas.forEach(function (fantasma) {
+        fantasma.actualizarPos();
+        fantasma.detectar();
+    });
 }
 
-
-function detectar() {
-    if (nextPosX > lastPosXFantasma && nextPosX < lastPosXFantasma + 48 && nextPosY > lastPosYFantasma && nextPosY < lastPosYFantasma + 48) {
-        perder();
-    }
-}
-var fin = setInterval(detectar, 10);
-var fantasmas = setInterval(drawFantasma, 30);
 
 function perder() {
     ctx2.clearRect(0, 0, escenario.width, escenario.height);
     ctx.clearRect(0, 0, tablero.width, tablero.height);
     console.log('h');
-    clearInterval(fin);
-    clearInterval(fantasmas);
     tablero.removeEventListener("mousemove", drawScarecrow);
+    clearInterval(actualizarScarecrow_Interval);
 }
 
+
+function startGame() {
+    tablero.addEventListener('mousemove', drawScarecrow);
+    actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 30);
+}
+
+btnStart.onclick = startGame;
