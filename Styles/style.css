@@ -1,4 +1,4 @@
-﻿body
+body
 {
   margin: 0px;
   box-sizing: border-box;
@@ -21,4 +21,11 @@
   display: block;
   margin: 0 auto;
   z-index: 2;
+}
+
+.btn_start {
+    position:absolute;
+    left: 375px;
+    top: 50%;
+    z-index:3;
 }
