@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <title></title>
     <link href="Styles/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
 </head>
 <body>
     <img id="enemigoR" src="img/scarecrowR.png" hidden="hidden" />
@@ -12,12 +13,30 @@
     <img id="fantasmaR" src="img/fantasmaR.png" hidden="hidden" />
     <img id="fantasmaL" src="img/fantasmaL.png" hidden="hidden" />
 
-    <label id="countdown" class="lbl_countdown">00:30</label>
-    <button id="start" class="btn_start">Start</button>>
+    <div class="page_container">
+        <div class="reglas_container">
+                <strong>Instrucciones:</strong>
+            <br>
+            <ul>
+                <li>tu "personaje" es el mouse</li>
+                <li>durante 15 seg tenes que:</li>
+                <ul>
+                    <li>esquivar al espantapajaros</li>
+                    <li>esquivar los fantasmas</li>
+                    <li>quedarte adentro del area</li>
+                </ul>
+                <li>cuando pasas de nivel se suma 1 fantasma</li>
+            </ul>
+        </div>
 
-    <canvas id="tablero" width="800" height="500" class="tablero"></canvas>
-    <canvas id="escenario" width="800" height="500" class="escenario"></canvas>
 
+        <div class="game_container">
+            <label id="countdown" class="lbl_countdown">00:30</label>
+            <label id="start" class="btn_start">Start</label>>
+            <canvas id="tablero" width="800" height="500" class="tablero"></canvas>
+            <canvas id="escenario" width="800" height="500" class="escenario"></canvas>
+        </div>
+    </div>
     <script src="Scripts/script.js"></script>
 </body>
 
