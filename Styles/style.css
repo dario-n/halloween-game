@@ -29,3 +29,11 @@ body
     top: 50%;
     z-index:3;
 }
+
+.lbl_countdown {
+    color: #fff;
+    position: absolute;
+    left: 375px;
+    top: 10%;
+    z-index: 3;
+}
