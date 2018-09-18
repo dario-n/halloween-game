@@ -75,6 +75,7 @@ var actualizarFantasmas_Interval;
 
 function init() {
     tablero.removeEventListener("mousemove", drawScarecrow);
+    tablero.removeEventListener('mouseleave', perder);
     clearInterval(actualizarScarecrow_Interval);
     clearInterval(actualizarFantasmas_Interval);
     clearInterval(timer);
@@ -206,6 +207,7 @@ function startGame() {
     btnStart.style.visibility = 'hidden';
     lblCountdown.innerText = "00:" + lvlTime;
     tablero.addEventListener('mousemove', drawScarecrow);
+    tablero.addEventListener('mouseleave', perder);
     actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 30);
     crearFantasma();
     actualizarFantasmas_Interval = setInterval(actualizarFantasmas, 30);
