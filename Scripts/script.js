@@ -1,6 +1,7 @@
 //Interfaz
 var btnStart = document.getElementById('start');
 var lblCountdown = document.getElementById('countdown');
+var lblLvlActual = document.getElementById('lvlActual');
 
 //Mouse
 var mousePosX = 0;
@@ -12,7 +13,7 @@ var tablero = document.getElementById('tablero');
 var ctx = tablero.getContext('2d');
 
 //Cuenta Regresiva
-var lvlTime = 15;
+var lvlTime = 10;
 var timer;
 
 
@@ -23,19 +24,20 @@ var Scarecrow = {
     enemigoActual: document.getElementById('enemigoR'),
     lastPosX: 0,
     lastPosY: 0,
+    velocidad: 2,
 
     actualizarPosX: function (posX) {
 
         if (this.lastPosX > posX) {
             this.enemigoActual = this.ladoL;
             ctx.clearRect(0, 0, tablero.width, tablero.height);
-            this.lastPosX -= 3
+            this.lastPosX -= this.velocidad;
             ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
         }
         else if (this.lastPosX < posX) {
             this.enemigoActual = this.ladoR;  
             ctx.clearRect(0, 0, tablero.width, tablero.height);
-            this.lastPosX += 3
+            this.lastPosX += this.velocidad;
             ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
         }
         mousedontmove = true;
@@ -45,12 +47,12 @@ var Scarecrow = {
 
         if (this.lastPosY > posY) {
             ctx.clearRect(0, 0, tablero.width, tablero.height);
-            this.lastPosY -= 3
+            this.lastPosY -= this.velocidad;
             ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
         }
         else if (this.lastPosY < posY) {
             ctx.clearRect(0, 0, tablero.width, tablero.height);
-            this.lastPosY += 3
+            this.lastPosY += this.velocidad;
             ctx.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
         }
         mousedontmove = true;
@@ -72,6 +74,13 @@ var ctx2 = escenario.getContext('2d');
 var fantasmas = [];
 var actualizarFantasmas_Interval;
 
+//Otros
+var godmode = true
+var lvlActual = 1;
+
+document.oncontextmenu = function () {
+    return false;
+}
 
 function init() {
     tablero.removeEventListener("mousemove", drawScarecrow);
@@ -79,18 +88,42 @@ function init() {
     clearInterval(actualizarScarecrow_Interval);
     clearInterval(actualizarFantasmas_Interval);
     clearInterval(timer);
-    mousePosX = 0;
-    mousePosY = 0;
-    Scarecrow.lastPosX = getRandomX();
-    Scarecrow.lastPosY = getRandomY();
-    lvlTime = 15;
+    mousePosX = 800;
+    mousePosY = 500;
+    Scarecrow.lastPosX = 0;
+    Scarecrow.lastPosY = 0;
+    checkLevel();
     btnStart.style.visibility = 'visible';
+    lblLvlActual.innerText = "Nivel: " + lvlActual;
+    godmode = true;
+}
+
+function checkLevel() {
+    if (lvlActual <= 5) {
+        lvlTime = 10;
+    }
+    else if (lvlActual <= 10) {
+        lvlTime = 15;
+        Scarecrow.velocidad += 1;
+    }
+    else if (lvlActual <= 15) {
+        lvlTime = 20;
+        Scarecrow.velocidad += 1;
+    }
+    else if (lvlActual <= 20) {
+        lvlTime = 25;
+        Scarecrow.velocidad += 1;
+    }
+    else if (lvlActual > 20) {
+        lvlTime = 30;
+        Scarecrow.velocidad += 1;
+    }
 }
 
 function getRandomX() {
     var rndX = Math.floor(Math.random() * escenario.width);
 
-    if (rndX >= escenario.width) {
+    if (rndX >= escenario.width - 48) {
         rndX -= 48;
     }
     else if (rndX <= 0) {
@@ -102,7 +135,7 @@ function getRandomX() {
 function getRandomY() {
     var rndY = Math.floor(Math.random() * escenario.height);
 
-    if (rndY >= escenario.height) {
+    if (rndY >= escenario.height - 48) {
         rndY -= 48;
     }
     else if (rndY <= 0) {
@@ -117,7 +150,9 @@ function drawScarecrow() {
         mousedontmove = false;
         Scarecrow.actualizarPosY(mousePosY);
         Scarecrow.actualizarPosX(mousePosX);
-        Scarecrow.detectar();
+        if (!godmode) {
+            Scarecrow.detectar();
+        }
 }
 
 function actualizarScarecrow() {
@@ -125,7 +160,9 @@ function actualizarScarecrow() {
     if (mousedontmove) {
         Scarecrow.actualizarPosY(mousePosY);
         Scarecrow.actualizarPosX(mousePosX);
-        Scarecrow.detectar();
+        if (!godmode) {
+            Scarecrow.detectar();
+        }
     }
 }
 
@@ -139,8 +176,8 @@ function crearFantasma() {
         enemigoActual: document.getElementById('fantasmaR'),
         lastPosX: getRandomX(),
         lastPosY: getRandomY(),
-        dx: 2,
-        dy: 2,
+        dx: Math.floor((Math.random() * 3) + 3),
+        dy: Math.floor((Math.random() * 3) + 3),
 
         cambiarLado: function () {
             if (this.enemigoActual == this.ladoR) {
@@ -177,7 +214,9 @@ function actualizarFantasmas() {
     ctx2.clearRect(0, 0, escenario.width, escenario.height);
     fantasmas.forEach(function (fantasma) {
         fantasma.actualizarPos();
-        fantasma.detectar();
+        if (!godmode) {
+            fantasma.detectar();
+        }
     });
 }
 
@@ -192,6 +231,7 @@ function countDown() {
 
     if (lvlTime == 0) {
         init();
+        lvlActual++;
     }
 }
 
@@ -199,19 +239,22 @@ function perder() {
     ctx2.clearRect(0, 0, escenario.width, escenario.height);
     ctx.clearRect(0, 0, tablero.width, tablero.height);
     fantasmas = [];
+    lvlActual = 1;
     init();
 }
 
 
 function startGame() {
-    btnStart.style.visibility = 'hidden';
-    lblCountdown.innerText = "00:" + lvlTime;
+    init();
     tablero.addEventListener('mousemove', drawScarecrow);
     tablero.addEventListener('mouseleave', perder);
+    btnStart.style.visibility = 'hidden';
+    lblCountdown.innerText = "00:" + lvlTime;
     actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 30);
     crearFantasma();
     actualizarFantasmas_Interval = setInterval(actualizarFantasmas, 30);
     timer = setInterval(countDown, 1000);
+    setTimeout(function () { godmode = false; }, 1500);
 }
 
 btnStart.onclick = startGame;
