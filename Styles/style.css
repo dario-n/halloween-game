@@ -7,7 +7,20 @@ body {
 }
 .page_container {
     display:flex ;
-    flex-direction:row;
+}
+
+.page_body {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.info_juego {
+    display: flex;
+    justify-content:space-between;
+    max-width: 800px;
+    margin: 25px 0;
 }
 
 .reglas_container {
@@ -19,21 +32,19 @@ body {
 
 .game_container {
     position: relative;
-    margin: 0 auto;
-    width: 80%;
-    height: 700px;
+    height: 500px;
+    max-width: 800px;
 }
+
 .escenario {
   border: 1px solid red;
   position: absolute;
-  top: 100px;
   background-image: url("../img/background_escenario.jpg");
   z-index: 1;
 }
 
 .tablero {
     position: absolute;
-    top: 100px;
     z-index: 2;
 }
 
@@ -44,7 +55,7 @@ body {
     border: 1px solid #F00;
     font-size: 2em;
     left: 350px;
-    top: 50%;
+    top: 80%;
     z-index: 3;
 }
 
@@ -54,8 +65,12 @@ body {
     border: 1px solid #f00;
     font-size: 1.5em;
     background-color: #ff6a00;
-    position: absolute;
-    left: 360px;
-    top: 7%;
-    z-index: 3;
+}
+
+.lbl_nivel {
+    color: #000;
+    padding: 2px 7px;
+    border: 1px solid #f00;
+    font-size: 1.5em;
+    background-color: #ff6a00;
 }
