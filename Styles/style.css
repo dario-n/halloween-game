@@ -4,7 +4,9 @@ body {
     background-image: url("../img/background.jpg");
     background-size: cover;
     font-family: 'Amatic SC', cursive;
+    font-weight: bold;
 }
+
 .page_container {
     display:flex ;
 }
@@ -23,11 +25,13 @@ body {
     margin: 25px 0;
 }
 
-.reglas_container {
+.lateral_container {
+    background-color: rgba(0,0,0,0.8);
     color:#fff;
     margin: 100px 3%;
     border: 2px solid #fff;
     padding: 5px;
+    width: 20%;
 }
 
 .game_container {
@@ -46,6 +50,26 @@ body {
 .tablero {
     position: absolute;
     z-index: 2;
+}
+
+.registrar_puntaje {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    top: 45%;
+    left: 25%;
+    z-index: 3;
+    width: 50%;
+    padding: 5px;
+    text-align: center;
+    background-color: #ff6a00;
+    border: 1px solid #F00;
+}
+
+.registrar_puntaje label {
+    font-size: 1.2em;
+    padding: 3px;
 }
 
 .btn_start {
@@ -73,4 +97,9 @@ body {
     border: 1px solid #f00;
     font-size: 1.5em;
     background-color: #ff6a00;
+}
+
+.tabla_posiciones {
+    width: 100%;
+    text-align:center;
 }
