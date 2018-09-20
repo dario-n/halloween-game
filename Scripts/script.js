@@ -1,7 +1,13 @@
 //Interfaz
 var btnStart = document.getElementById('start');
+var btnEnviar = document.getElementById('enviar');
+
 var lblCountdown = document.getElementById('countdown');
 var lblLvlActual = document.getElementById('lvlActual');
+
+var txtNombre = document.getElementById('nombre');
+
+var tblPosiciones = document.getElementById('posiciones');
 
 //Mouse
 var mousePosX = 0;
@@ -77,6 +83,7 @@ var actualizarFantasmas_Interval;
 //Otros
 var godmode = true
 var lvlActual = 1;
+var posiciones = [];
 
 document.oncontextmenu = function () {
     return false;
@@ -170,42 +177,42 @@ function actualizarScarecrow() {
 //Canvas 2
 function crearFantasma() {
 
-    Fantasma = {
-        ladoR: document.getElementById('fantasmaR'),
-        ladoL: document.getElementById('fantasmaL'),
-        enemigoActual: document.getElementById('fantasmaR'),
-        lastPosX: getRandomX(),
-        lastPosY: getRandomY(),
-        dx: Math.floor((Math.random() * 3) + 3),
-        dy: Math.floor((Math.random() * 3) + 3),
+    var Fantasma = {
+            ladoR: document.getElementById('fantasmaR'),
+            ladoL: document.getElementById('fantasmaL'),
+            enemigoActual: document.getElementById('fantasmaR'),
+            lastPosX: getRandomX(),
+            lastPosY: getRandomY(),
+            dx: Math.floor((Math.random() * 3) + 3),
+            dy: Math.floor((Math.random() * 3) + 3),
 
-        cambiarLado: function () {
-            if (this.enemigoActual == this.ladoR) {
-                this.enemigoActual = this.ladoL;
-            }
-            else {
-                this.enemigoActual = this.ladoR;
-            }
-        },
-        actualizarPos: function () {
-            if (this.lastPosX + this.dx > escenario.width - 48 || this.lastPosX + this.dx < 0) {
-                this.dx = -this.dx;
-                this.cambiarLado();
-            }
-            if (this.lastPosY + this.dy > escenario.height - 48 || this.lastPosY + this.dy < 0) {
-                this.dy = -this.dy;
-            }
-            ctx2.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
-            this.lastPosX += this.dx;
-            this.lastPosY += this.dy;
-        },
+            cambiarLado: function () {
+                if (this.enemigoActual == this.ladoR) {
+                    this.enemigoActual = this.ladoL;
+                }
+                else {
+                    this.enemigoActual = this.ladoR;
+                }
+            },
+            actualizarPos: function () {
+                if (this.lastPosX + this.dx > escenario.width - 48 || this.lastPosX + this.dx < 0) {
+                    this.dx = -this.dx;
+                    this.cambiarLado();
+                }
+                if (this.lastPosY + this.dy > escenario.height - 48 || this.lastPosY + this.dy < 0) {
+                    this.dy = -this.dy;
+                }
+                ctx2.drawImage(this.enemigoActual, this.lastPosX, this.lastPosY, 48, 48);
+                this.lastPosX += this.dx;
+                this.lastPosY += this.dy;
+            },
 
-        detectar: function () {
-            if (mousePosX > this.lastPosX && mousePosX < this.lastPosX + 48 && mousePosY > this.lastPosY && mousePosY < this.lastPosY + 48) {
-                perder();
+            detectar: function () {
+                if (mousePosX > this.lastPosX && mousePosX < this.lastPosX + 48 && mousePosY > this.lastPosY && mousePosY < this.lastPosY + 48) {
+                    perder();
+                }
             }
-        }
-    };
+        };
     ctx2.drawImage(Fantasma.enemigoActual, Fantasma.lastPosX, Fantasma.lastPosY, 48, 48);
     fantasmas.push(Fantasma);
 }
@@ -240,6 +247,7 @@ function perder() {
     ctx.clearRect(0, 0, tablero.width, tablero.height);
     fantasmas = [];
     lvlActual = 1;
+    Scarecrow.velocidad = 2;
     init();
 }
 
@@ -250,11 +258,59 @@ function startGame() {
     tablero.addEventListener('mouseleave', perder);
     btnStart.style.visibility = 'hidden';
     lblCountdown.innerText = "00:" + lvlTime;
-    actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 30);
+    actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 8);
     crearFantasma();
     actualizarFantasmas_Interval = setInterval(actualizarFantasmas, 30);
     timer = setInterval(countDown, 1000);
     setTimeout(function () { godmode = false; }, 1500);
 }
 
+function agregarPuntaje() {
+    var r = new XMLHttpRequest();
+    r.open("POST", "http://10.11.12.122:5000/api/values/", true);
+    r.setRequestHeader("Content-type", "application/json");
+    
+}
+
+function leerPuntajes() {
+    var r = new XMLHttpRequest();
+    r.open("GET", "http://10.11.12.122:5000/api/values/" , true);
+    r.onreadystatechange = function () {
+        if (r.readyState === 4 && r.status === 200) {
+            var allText = r.responseText;
+            var jugadores = JSON.parse(allText);
+ 
+            if (jugadores.length > 0) {
+                jugadores = jugadores.sort(function (a, b) {
+                    var nameA = a.Nivel;
+                    var nameB = b.Nivel;
+
+                    if (nameA < nameB) {
+                        return 1;
+                    }
+                    if (nameA > nameB) {
+                        return -1;
+                    }
+                });
+                jugadores.forEach(function (jugador) {
+                    var tr = document.createElement('tr');
+                    var tdName = document.createElement('td');
+                    var tdLvl = document.createElement('td');
+                    var tdName_text = document.createTextNode(jugador.Nombre);
+                    var tdLvl_text = document.createTextNode(jugador.Nivel);
+                    tdName.appendChild(tdName_text);
+                    tdLvl.appendChild(tdLvl_text);
+                    tr.appendChild(tdName);
+                    tr.appendChild(tdLvl);
+                    tblPosiciones.appendChild(tr)
+                });
+            }
+        }
+    }
+    r.send();
+}
+
+
+leerPuntajes();
 btnStart.onclick = startGame;
+
