@@ -3,7 +3,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Halloween Game</title>
     <link href="Styles/style.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
 </head>
@@ -15,7 +15,7 @@
 
     <div class="page_container">
 
-        <div class="reglas_container">
+        <div class="lateral_container">
             <strong>Instrucciones:</strong>
             <br>
             <ul>
@@ -38,10 +38,25 @@
                 <label id="countdown" class="lbl_countdown">00:10</label>
             </div>
             <div class="game_container">
+                <div class="registrar_puntaje">
+                    <label>Nombre: </label>
+                    <input type="text" id="nombre" value=""/>
+                    <label id="enviar">Enviar</label>
+                </div>
                 <label id="start" class="btn_start">Start</label>
                 <canvas id="tablero" width="800" height="500" class="tablero"></canvas>
                 <canvas id="escenario" width="800" height="500" class="escenario"></canvas>
             </div>
+        </div>
+        <div class="lateral_container">
+            <strong>Tabla de Posiciones:</strong>
+            <br><br>
+            <table id="posiciones" class="tabla_posiciones">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Nivel</th>
+                </tr>
+            </table>
         </div>
     </div>
     <script src="Scripts/script.js"></script>
