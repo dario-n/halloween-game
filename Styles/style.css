@@ -65,6 +65,7 @@ body {
     text-align: center;
     background-color: #ff6a00;
     border: 1px solid #F00;
+    visibility: hidden;
 }
 
 .registrar_puntaje label {
