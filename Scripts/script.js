@@ -1,11 +1,13 @@
 //Interfaz
 var btnStart = document.getElementById('start');
 var btnEnviar = document.getElementById('enviar');
+var btnCancelar = document.getElementById('cancelar');
 
 var lblCountdown = document.getElementById('countdown');
 var lblLvlActual = document.getElementById('lvlActual');
 
 var txtNombre = document.getElementById('nombre');
+var divSubmit = document.getElementById('divSubmit');
 
 var tblPosiciones = document.getElementById('posiciones');
 
@@ -100,7 +102,6 @@ function init() {
     Scarecrow.lastPosX = 0;
     Scarecrow.lastPosY = 0;
     checkLevel();
-    btnStart.style.visibility = 'visible';
     lblLvlActual.innerText = "Nivel: " + lvlActual;
     godmode = true;
 }
@@ -108,22 +109,23 @@ function init() {
 function checkLevel() {
     if (lvlActual <= 5) {
         lvlTime = 10;
+        Scarecrow.velocidad = 2;
     }
     else if (lvlActual <= 10) {
         lvlTime = 15;
-        Scarecrow.velocidad += 1;
+        Scarecrow.velocidad = 3;
     }
     else if (lvlActual <= 15) {
         lvlTime = 20;
-        Scarecrow.velocidad += 1;
+        Scarecrow.velocidad = 4;
     }
     else if (lvlActual <= 20) {
         lvlTime = 25;
-        Scarecrow.velocidad += 1;
+        Scarecrow.velocidad = 5;
     }
     else if (lvlActual > 20) {
         lvlTime = 30;
-        Scarecrow.velocidad += 1;
+        Scarecrow.velocidad = 6;
     }
 }
 
@@ -239,15 +241,16 @@ function countDown() {
     if (lvlTime == 0) {
         init();
         lvlActual++;
+        btnStart.style.visibility = 'visible';
     }
 }
 
 function perder() {
     ctx2.clearRect(0, 0, escenario.width, escenario.height);
     ctx.clearRect(0, 0, tablero.width, tablero.height);
+    divSubmit.style.visibility = "visible";
     fantasmas = [];
-    lvlActual = 1;
-    Scarecrow.velocidad = 2;
+    btnStart.style.visibility = 'hidden';
     init();
 }
 
@@ -257,53 +260,94 @@ function startGame() {
     tablero.addEventListener('mousemove', drawScarecrow);
     tablero.addEventListener('mouseleave', perder);
     btnStart.style.visibility = 'hidden';
+    divSubmit.style.visibility = 'hidden';
     lblCountdown.innerText = "00:" + lvlTime;
-    actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 8);
+    actualizarScarecrow_Interval = setInterval(actualizarScarecrow, 15);
     crearFantasma();
     actualizarFantasmas_Interval = setInterval(actualizarFantasmas, 30);
     timer = setInterval(countDown, 1000);
     setTimeout(function () { godmode = false; }, 1500);
 }
 
+function ordenarPosiciones() {
+    posiciones = posiciones.sort(function (a, b) {
+        var nivelA = a.Nivel;
+        var nivelB = b.Nivel;
+
+        if (nivelA < nivelB) {
+            return 1;
+        }
+        if (nivelA > nivelB) {
+            return -1;
+        }
+    });
+}
+
+function actulizarTablaPosiciones() {
+    var tbody = document.createElement('tbody');
+
+    ordenarPosiciones();
+
+    posiciones.forEach(function (jugador) {
+        var tr = document.createElement('tr');
+        var tdName = document.createElement('td');
+        var tdLvl = document.createElement('td');
+        var tdName_text = document.createTextNode(jugador.Nombre);
+        var tdLvl_text = document.createTextNode(jugador.Nivel);
+        tdName.appendChild(tdName_text);
+        tdLvl.appendChild(tdLvl_text);
+        tr.appendChild(tdName);
+        tr.appendChild(tdLvl);
+        tbody.appendChild(tr)
+    });
+    tblPosiciones.appendChild(tbody);
+}
+
+function validar() {
+    var valids = /^[A-Za-z0-9]+$/;
+    if (txtNombre.value.trim().length > 0 && txtNombre.value.trim().length <= 10 && txtNombre.value.trim().match(valids)) {
+        agregarPuntaje();
+    }
+    else {
+        txtNombre.value = "";
+        alert('puto');
+    }
+}
+
 function agregarPuntaje() {
     var r = new XMLHttpRequest();
-    r.open("POST", "http://10.11.12.122:5000/api/values/", true);
-    r.setRequestHeader("Content-type", "application/json");
-    
+    var registro = {
+        Nombre: txtNombre.value,
+        Nivel: lvlActual
+    };
+
+    lvlActual = 1;
+    btnStart.style.visibility = 'visible';
+    posiciones.push(registro);
+
+    ordenarPosiciones();
+
+    r.open("POST", "http://10.11.12.122:5000/api/values", false);
+    r.setRequestHeader('Content-Type', 'application/json');
+    r.send(JSON.stringify(posiciones));
+    tblPosiciones.querySelector('tbody').remove();
+    leerPuntajes();
+    txtNombre.value = "";
+    divSubmit.style.visibility = 'hidden';
+
 }
 
 function leerPuntajes() {
     var r = new XMLHttpRequest();
-    r.open("GET", "http://10.11.12.122:5000/api/values/" , true);
+    r.open("GET", "http://10.11.12.122:5000/api/values" , true);
     r.onreadystatechange = function () {
         if (r.readyState === 4 && r.status === 200) {
             var allText = r.responseText;
             var jugadores = JSON.parse(allText);
- 
+            
             if (jugadores.length > 0) {
-                jugadores = jugadores.sort(function (a, b) {
-                    var nameA = a.Nivel;
-                    var nameB = b.Nivel;
-
-                    if (nameA < nameB) {
-                        return 1;
-                    }
-                    if (nameA > nameB) {
-                        return -1;
-                    }
-                });
-                jugadores.forEach(function (jugador) {
-                    var tr = document.createElement('tr');
-                    var tdName = document.createElement('td');
-                    var tdLvl = document.createElement('td');
-                    var tdName_text = document.createTextNode(jugador.Nombre);
-                    var tdLvl_text = document.createTextNode(jugador.Nivel);
-                    tdName.appendChild(tdName_text);
-                    tdLvl.appendChild(tdLvl_text);
-                    tr.appendChild(tdName);
-                    tr.appendChild(tdLvl);
-                    tblPosiciones.appendChild(tr)
-                });
+                posiciones = jugadores;
+                actulizarTablaPosiciones();
             }
         }
     }
@@ -311,6 +355,17 @@ function leerPuntajes() {
 }
 
 
+
+btnCancelar.onclick = function () {
+    lvlActual = 1;
+    divSubmit.style.visibility = 'hidden';
+    btnStart.style.visibility = 'visible';
+}
+
 leerPuntajes();
+btnEnviar.onclick = validar;
 btnStart.onclick = startGame;
+
+setInterval(function () { tblPosiciones.querySelector('tbody').remove(); }, 3001);
+var actualizar = setInterval(leerPuntajes, 3000);
 
