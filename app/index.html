@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Halloween Game</title>
+    <link href="/style.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
+</head>
+<body>
+    <img id="enemigoR" src="/scarecrowR.png" hidden="hidden" />
+    <img id="enemigoL" src="/scarecrowL.png" hidden="hidden" />
+    <img id="fantasmaR" src="/fantasmaR.png" hidden="hidden" />
+    <img id="fantasmaL" src="/fantasmaL.png" hidden="hidden" />
+
+    <div class="page_container">
+
+        <div class="lateral_container">
+            <strong>Instrucciones:</strong>
+            <br>
+            <ul>
+                <li>tu "personaje" es el mouse</li>
+                <li>para avanzar de nivel tenes que:</li>
+                <ul>
+                    <li>esquivar al espantapajaros</li>
+                    <li>esquivar los fantasmas</li>
+                    <li>quedarte adentro del area</li>
+                </ul>
+                <li>cada 5 niveles se suman 5seg</li>
+                <li>cada 5 niveles el espantapajaros aumeta la velocidad</li>
+                <li>cuando pasas de nivel se suma 1 fantasma</li>
+                <li>despues de apretar start tenes 1.5 seg de inmunidad</li>
+            </ul>
+        </div>
+        <div class="page_body">
+            <div class="info_juego">
+                <label id="lvlActual" class="lbl_nivel">Nivel: 1</label>
+                <label id="countdown" class="lbl_countdown">00:10</label>
+            </div>
+            <div class="game_container">
+                <label id="start" class="btn_start">Start</label>
+                <canvas id="tablero" width="800" height="500" class="tablero"></canvas>
+                <canvas id="escenario" width="800" height="500" class="escenario"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="/script.js"></script>
+</body>
+
+</html>
